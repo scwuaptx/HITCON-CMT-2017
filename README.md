@@ -59,9 +59,9 @@ void sig_alarm_handler(int signum){
     }
 }
 ```
-You can let the power less than 50 and wait until time out, you would get a very large power.
+- You can let the power less than 50 and wait until time out, you would get a very large power.
 
-You can let power equal to 2000 and buy Nuclear reactor and Solar cell panel than your power will less than 50.
+- You can let power equal to 2000 and buy Nuclear reactor and Solar cell panel than your power will less than 50.
 
 
 ### Imagic
@@ -72,7 +72,7 @@ You can let power equal to 2000 and buy Nuclear reactor and Solar cell panel tha
 - Protection
 	- Stack cookie 
 	- No DEP
-	- NO SEHOP,SafeSeh 
+	- NO SEHOP,SafeSEH
 
 - Exploit
 	- First connection 
@@ -80,6 +80,7 @@ You can let power equal to 2000 and buy Nuclear reactor and Solar cell panel tha
 	- Second connection 
 		- Overwrite the SEH Handler
 		- Trigger the SEH and jmp to shellcode
+			- You can use `%s` to dereference invailed memory area then it would trigger exception.
 
 ```
 #!/usr/bin/env python
@@ -129,3 +130,31 @@ r.recvuntil(":")
 r.sendline("3")
 r.interactive()
 ```
+
+### ddos
+- Vulnerability
+	- Use After free in the run function
+		- It doesn't check the inused flag when it run.
+
+- Exploit
+	- How to use the UAF vulnerability ?
+		- [heap exploitation](https://www.slideshare.net/AngelBoy1/heap-exploitation-51891400) p39-44
+		- Put the command in the username buffer.
+		- Add a target
+			- It will allocate a struct and a buffer of RHOST. 
+		- Remove the target
+			- Release the struct and the buffer of RHOST, but it does not set pointer of the struct to NULL. 
+		- Add a target
+			-  Use the old struct and allocate a buffer, it wound get same address as the old struct.
+			-  You can use it to overwrite the function pointer and name pointer in the structure.
+			-  You need to let the name pointer point to `usename buffer` and let the function pointer point to `system`
+		- Run
+			- trigger the function call 
+
+	- payload
+		- Add a target
+			- "a"*0x18
+		- Remove the target
+		- Add a target
+			- `*^Gp^Ta\n`
+		- Run
